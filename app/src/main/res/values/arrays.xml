@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="domains">
+        <item>gmail.com</item>
+        <item>yahoo.com</item>
+        <item>tiki.vn</item>
+        <item>hotmail.com</item>
+        <item>co.jp</item>
+    </string-array>
+</resources>

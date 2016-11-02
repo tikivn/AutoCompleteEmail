@@ -1,0 +1,34 @@
+language: android
+android:
+  components:
+  - tools
+  - platform-tools
+  - build-tools-24.0.2
+  - android-24
+  - extra-android-m2repository
+  - extra-google-google_play_services
+  - extra-google-m2repository
+  - extra-android-m2repository
+  - addon-google_apis-google-24
+jdk:
+- oraclejdk8
+before_script:
+- rm -rf ~/.gradle/caches/
+script:
+- ./gradlew ":abtesting:build"
+after_success:
+- ".buildscript/deploy_snapshot.sh"
+env:
+  global:
+  - secure: f3qS4/MfTmcBWmxRJNuhTfeifaZXM2nmwKzNHCYha8lZ/+hFQcUbE1hJATOoRjdaRzIPgtouHSf7HgwKBfVPCNj35zee9cVO1TCfRPfr5rqLgvcmgiYnaeyVX0JVveH4AjwOjGJLXqVyMlDy/Y9ol7fW7OQDkz403As+oYxUvzi3MaRQAby56YWIDkHLEgcK5C20dvxS+e6/2wxVXG2D6woyG8D0xE0H7/n8pWwiF5Spby+9UcjwJ26lD8/XTIvtIcLgFVIYfW79ANLKhm8+i7t5BQ45CeRARCPVoQ1XkJiCST/P9V5OY1Gz+VFFHWKW85QPB9SXbcilSbxLmDRQA7snA5GUbR+E1aGdKEjfYVecz/TJioBlwOVjDLUPLoaT0Mi3RY1K+Yu8RIPl64fxQ2Ik2uQhGY0freCeaO/2v7zs0p2e/IfxpwNb8yWeywhSGcoqY6tBSPTH0LPRmb9ux6p+9xwxGctr9MtK+Z0AXKgLvAts9tzTAsQWlI6hvlhUjES63PjGwbZWAuBjF0pFeDrlYN94l3dCDDp8oK3oIbbEGD+tFyiBNQ96ArlJU56AeyHnZN9PVx9ckmsD1tHfKUFG6UmzWAc+jTx97WI44i8vKhWq3dG1ywNHY2gXxVopO36av3KTupoC9xB5Mm3qk3HVIXETbzLCRNvf+0iPQFE=
+  - secure: ACuwuVDm9hg8biZ154zVf1fMG560+HfrjDWDh1m8/qikMsfYMAO1y0sDGg4EZyCsE556PB35h0RIARgA9PcND1uA+7neX6rKnkyvCP1smfenJbhbJlf/muLP5JykTGG/J7OWJBDKMM7SAuCJy7UWcnLNAPpJRghDjLCMmXhztRtqadEStPMxn1+Ao8kjC6dUS9PHQz5Au1jKVw6xbCe/Ie/i59kdnRzgqq4JwzzEl3ttThh5dXvwJLPMtXPADv5g/J+/Ebh1zM+UYZ16Qnx6RpVe25WmZIBlp0T6y86d9YxfpayeEpZCb0hzXGLB1i9WI8TARl8XX2P/Ry2fuvqBCVp3P3kMatYbhqdCwgFIT+Un/YcsjsZp+75ixQkgU+UJTWgEn3vHtTMR2eRx63ZQ4Z83BRqLwkXUgQzspFmdEHWIQmFo39advHlLWgGo4ytJr1J9HwUPJV8iBGZvcMsMUsnv8vTSO5r79Ek0JZS2Cdio0qbieYgXHtVB++UKfwUhnyhPGPWOpqDbwGxb2jSlOKNVWCBfwntZ3fLVU3Wo2f5mCw6yvg1kMYyPnR+UN/3zO9WTeMX7UWVyHsTw4kwYBbH4iMtcCyPbpMFI5OVHX29XGvwIfjvw3eaqoQWQSMTNka/Sx9cIEHhvM8PzJBhbbwqihPC1rg/pa1ArQGbllmE=
+  - secure: pXQ4ckqRrgDy9p9rBEcCZaN+c+bIzLScp3XTrxsnHKV2LTliDbeUDIKfVaxkUcXiML9SrUc0Nu2TvJ/paHKwFqvJ9oWvTvzylUGIaBEE1tAAwnNNd1n1ciaThmH4FCM9dRTxfo+IGSdkM/ntGJVO6gkUJoJL26TZmgkBApCokjB6OioKBwJokZizC4kiJGfyD/t9vGT3VPH86Z//g7n1xcalK3a0jQ+YDzFFGuPfWQQxs2T6aEPTf09xX1CqhQ/qkPDRaMIcYWTY2ENb5YU2QWn7DjCni6fg7+e5rq/5DkMg2HoZwWYUA4eDZjYlBSpQkfcHAG1PJ/SV9ppgkRvIQj8rvneb6LucjcLMhfqALfCMcvsG1+40ZGtUAdSQqZuqROELxqgmt7xM0bPb9pACBmk6B4yo74Ip4RkfRMh02KvsvDfrpuRcmzI5EJJLcqWtRaWzlmcp9QuTH85XusWuNH+bYohPJ+ZEvaM3baU5v4qJZWaBqLvHwTphapsieXXG6nYtrwJHkQ0Ecy8SDdMsnXaO1oJ3J/23G5Hms4FFjB5ccLI85dU5vzJUW15ihNR0gJ+VM6g90lWbTktnyfKx+LDbtX8bPg7B6/1uK9l0lceS3wZO5t0G13eif6ukI11SSb1i2BHU53avIj+IQDvF7ptTII17C0bHEpA+jKqI+30=
+branches:
+  except:
+  - gh-pages
+notifications:
+  email: false
+sudo: false
+cache:
+  directories:
+  - "$HOME/.gradle"
