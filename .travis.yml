@@ -12,10 +12,8 @@ android:
   - addon-google_apis-google-24
 jdk:
 - oraclejdk8
-before_script:
-- rm -rf ~/.gradle/caches/
 script:
-- ./gradlew ":abtesting:build"
+- ./gradlew ":autocomplete:build"
 after_success:
 - ".buildscript/deploy_snapshot.sh"
 env:
