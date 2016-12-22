@@ -1,1 +1,1 @@
-include ':app', ':AutoComplete'
+include ':app', ':library'

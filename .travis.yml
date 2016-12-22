@@ -13,7 +13,7 @@ android:
 jdk:
 - oraclejdk8
 script:
-- ./gradlew ":autocomplete:build"
+- ./gradlew ":library:build"
 after_success:
 - ".buildscript/deploy_snapshot.sh"
 env:
