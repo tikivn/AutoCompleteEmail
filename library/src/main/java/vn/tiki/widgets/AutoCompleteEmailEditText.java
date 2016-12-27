@@ -2,13 +2,11 @@ package vn.tiki.widgets;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.provider.Settings;
 import android.support.v7.widget.AppCompatEditText;
-import android.text.Editable;
 import android.text.InputType;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.View;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,74 +16,7 @@ import java.util.List;
  */
 public class AutoCompleteEmailEditText extends AppCompatEditText {
 
-  private static final String TAG = "AutoCompleteEmailEdit";
   private List<String> domains;
-  private boolean isBackPressing;
-  private final TextWatcher watcher = new TextWatcher() {
-
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-      Log.d(
-          TAG,
-          "beforeTextChanged() called with: s = ["
-              + s
-              + "], start = ["
-              + start
-              + "], count = ["
-              + count
-              + "], after = ["
-              + after
-              + "]");
-      isBackPressing = count > 0 && after == 0;
-    }
-
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-    }
-
-    @Override
-    public void afterTextChanged(Editable s) {
-
-      if (!isBackPressing) {
-
-        String textAfterChange = s.toString();
-        String matchDomain = "";
-        String textAfterAtSymbol = "";
-
-        int atSignPosition = textAfterChange.indexOf('@');
-        if (atSignPosition > 1
-            && atSignPosition < (textAfterChange.length() + 1)) {
-
-          textAfterAtSymbol = textAfterChange.substring(
-              atSignPosition + 1,
-              textAfterChange.length());
-
-          if (textAfterAtSymbol.isEmpty()) {
-            return;
-          }
-
-          for (String domain : domains) {
-
-            if (domain.startsWith(textAfterAtSymbol)) {
-              matchDomain = domain;
-            }
-          }
-        }
-
-        removeTextChangedListener(watcher);
-
-        if (!matchDomain.isEmpty()) {
-          String filled = matchDomain.substring(textAfterAtSymbol.length(), matchDomain.length());
-          String text = textAfterChange + filled;
-          int highlight = text.lastIndexOf(filled);
-          setText(text);
-          setSelection(highlight, text.length());
-        }
-        addTextChangedListener(watcher);
-      }
-    }
-  };
 
   public AutoCompleteEmailEditText(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
@@ -129,17 +60,21 @@ public class AutoCompleteEmailEditText extends AppCompatEditText {
 
   public void init() {
     setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-    addTextChangedListener(watcher);
-    setOnFocusChangeListener(new OnFocusChangeListener() {
-      @Override
-      public void onFocusChange(View v, boolean hasFocus) {
-        if (!hasFocus) {
-          if (getSelectionStart() != getSelectionEnd()) {
-            setSelection(getText().length());
-          }
-        }
-      }
-    });
+
+    String keyboardId = Settings.Secure.getString(
+        getContext().getContentResolver(),
+        Settings.Secure.DEFAULT_INPUT_METHOD
+    );
+
+    InputHandler inputHandler;
+
+    if (Constant.GENERIC_ANDROID_ID.contains(keyboardId)) {
+      inputHandler = new GenericAndroidInputHandler(this, domains);
+    } else if (Constant.LABANKEY_ID.equals(keyboardId)) {
+      inputHandler = new LaBanKeyInputHandler(this, domains);
+    } else if (Constant.ASUS_ID.equals(keyboardId)) {
+      inputHandler = new AsusInputHandler(this, domains);
+    }
   }
 
   public void setSuggestedDomains(List<String> domains) {
