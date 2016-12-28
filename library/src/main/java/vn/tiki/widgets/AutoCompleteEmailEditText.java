@@ -4,11 +4,11 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.provider.Settings;
 import android.support.v7.widget.AppCompatEditText;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.util.Log;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -17,6 +17,60 @@ import java.util.List;
 public class AutoCompleteEmailEditText extends AppCompatEditText {
 
   private List<String> domains;
+  private boolean isBackPressing;
+
+  private final TextWatcher watcher = new TextWatcher() {
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+      isBackPressing = count > 0 && after == 0;
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+
+      if (!isBackPressing) {
+
+        String textAfterChanged = s.toString();
+        String matchDomain = "";
+        String textAfterAt = "";
+
+        int atPosition = textAfterChanged.indexOf('@');
+        if (atPosition > 1 && atPosition < (textAfterChanged.length() + 1)) {
+
+          textAfterAt = textAfterChanged.substring(atPosition + 1, textAfterChanged.length());
+
+          if (textAfterAt.isEmpty()) {
+            return;
+          }
+
+          for (String domain : domains) {
+
+            if (domain.startsWith(textAfterAt)) {
+              matchDomain = domain;
+            }
+          }
+        }
+
+        if (!matchDomain.isEmpty()) {
+          removeTextChangedListener(watcher);
+
+          String filled = matchDomain.substring(textAfterAt.length(), matchDomain.length());
+          String text = textAfterChanged + filled;
+          int highlight = text.lastIndexOf(filled);
+          setText(text);
+          setSelection(highlight, text.length());
+
+          addTextChangedListener(watcher);
+        }
+      }
+    }
+  };
 
   public AutoCompleteEmailEditText(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
@@ -25,27 +79,20 @@ public class AutoCompleteEmailEditText extends AppCompatEditText {
 
   public AutoCompleteEmailEditText(Context context, AttributeSet attrs) {
     super(context, attrs);
-    TypedArray a = context.obtainStyledAttributes(
-        attrs,
-        R.styleable.AutoCompleteEmailEditText);
+    TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.AutoCompleteEmailEditText);
 
     try {
-      CharSequence[] domainsFromResource =
+      CharSequence[] predefinedDomains =
           a.getTextArray(R.styleable.AutoCompleteEmailEditText_domains);
 
-      if (domainsFromResource != null) {
+      domains = new ArrayList<>();
 
-        String[] referencedDomains = new String[domainsFromResource.length];
-        int i = 0;
-
-        for (CharSequence domain : domainsFromResource) {
-          referencedDomains[i++] = domain.toString();
+      if (predefinedDomains != null) {
+        for (CharSequence domain : predefinedDomains) {
+          domains.add(domain.toString());
         }
-
-        domains = Arrays.asList(referencedDomains);
-      } else {
-        domains = new ArrayList<>();
       }
+
     } finally {
       a.recycle();
     }
@@ -59,21 +106,30 @@ public class AutoCompleteEmailEditText extends AppCompatEditText {
   }
 
   public void init() {
-    setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
 
+    setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+        | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+
+    if (supportedEnvironment()) {
+      addTextChangedListener(watcher);
+    }
+  }
+
+  /**
+   * For some keyboard with enable auto suggestion, the textwatcher does not work properly
+   *
+   * @return verified environment
+   */
+
+  private boolean supportedEnvironment() {
     String keyboardId = Settings.Secure.getString(
         getContext().getContentResolver(),
-        Settings.Secure.DEFAULT_INPUT_METHOD
-    );
+        Settings.Secure.DEFAULT_INPUT_METHOD);
 
-    InputHandler inputHandler;
-
-    if (Constant.GENERIC_ANDROID_ID.contains(keyboardId)) {
-      inputHandler = new GenericAndroidInputHandler(this, domains);
-    } else if (Constant.LABANKEY_ID.equals(keyboardId)) {
-      inputHandler = new LaBanKeyInputHandler(this, domains);
-    } else if (Constant.ASUS_ID.equals(keyboardId)) {
-      inputHandler = new AsusInputHandler(this, domains);
+    if (Constant.LABANKEY_ID.equals(keyboardId)) {
+      return LabanKeyEnvironment.verify();
+    } else {
+      return true;
     }
   }
 
