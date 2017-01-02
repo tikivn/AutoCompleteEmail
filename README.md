@@ -24,7 +24,7 @@ allprojects {
 
 ```
 dependencies {
-        compile 'vn.tiki.widgets:AutoCompleteEmail:1.0.0-SNAPSHOT'
+        compile 'vn.tiki.widgets:AutoCompleteEmail:1.0.1-SNAPSHOT'
 }
 ```
 
