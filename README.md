@@ -1,5 +1,6 @@
 # AutoCompleteEmail
-[![Build Status](https://api.travis-ci.org/dbof10/AutoCompleteEmail.svg?branch=master)](https://travis-ci.org/dbof10/AutoCompleteEmail)
+
+[![Build Status](https://travis-ci.org/tikivn/AutoCompleteEmail.svg?branch=master)](https://travis-ci.org/tikivn/AutoCompleteEmail)
 
 EditTextView suggests pre-define email domains.
 
