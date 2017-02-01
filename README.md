@@ -13,19 +13,8 @@ Step 1. Add the dependency
 Add it in your root build.gradle at the end of repositories:
 
 ```
-allprojects {
-  repositories {
-    ...
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-	  }
-}
-```
-
-
-
-```
 dependencies {
-        compile 'vn.tiki.widgets:AutoCompleteEmail:1.0.1-SNAPSHOT'
+        compile 'vn.tiki.widgets:autocompleteemail:1.0.1'
 }
 ```
 
