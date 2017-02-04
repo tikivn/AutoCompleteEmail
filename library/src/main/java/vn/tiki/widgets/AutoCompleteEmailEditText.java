@@ -108,7 +108,7 @@ public class AutoCompleteEmailEditText extends AppCompatEditText {
   public void init() {
 
     setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
-        | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+        | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
 
     if (supportedEnvironment()) {
       addTextChangedListener(watcher);
